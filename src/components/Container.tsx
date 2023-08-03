@@ -1,7 +1,8 @@
 import styled from 'styled-components';
 
 export default styled.div `
-        height: calc(100vh - 50px);
+        font-family: "Hero New",sans-serif;
+        height: 100%;
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -9,13 +10,12 @@ export default styled.div `
         input {
             padding: 10px;
             width: 303px;
-            height: 45px;
+            height: 20px;
             border: 1px solid #000000;
-            border-radius: 5px;
+            border-radius: 20px;
             margin-bottom: 10px;
         }
         input::placeholder {
-            font-family: 'Righteous';
             font-size: 18px;
         }
         img {
@@ -27,13 +27,12 @@ export default styled.div `
             font-size: 25px;
         }
         button {
-            font-family: 'Righteous';
             font-size: 17px;
             display: flex;
             justify-content: center;
             align-items: center;
             background: #A328D6;
-            border-radius: 5px;
+            border-radius: 20px;
             color: #ffffff;
             width: 303px;
             height: 45px;

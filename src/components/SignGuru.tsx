@@ -1,6 +1,5 @@
 "use client";
 import { useState } from "react";
-//import { useRouter } from 'next/router';
 import axios from "axios";
 import Container from "@/components/Container";
 import Loading from "@/components/Loading";
@@ -13,7 +12,6 @@ export default function SignUser() {
   const [cpf, setCpf] = useState("");
   const [phone, setPhone] = useState("");
   const [loading, setLoading] = useState(false);
-  //const router = useRouter();
 
   function sendData() {
     
@@ -30,7 +28,6 @@ export default function SignUser() {
       .post("http://localhost:4000/users", body)
       .then(() => {
         setLoading(false);
-        //router.push("/");
       })
       .catch((error) => {
         if (error.response.status === 409) {
