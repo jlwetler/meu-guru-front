@@ -1,10 +1,15 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import Container from "@/components/Container";
 import Loading from "@/components/Loading";
 
-export default function SignUser() {
+interface Props {
+  open: boolean;
+  onClose: () => void 
+}
+
+export default function SignUser({open, onClose}: Props) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -14,7 +19,6 @@ export default function SignUser() {
   const [loading, setLoading] = useState(false);
 
   function sendData() {
-    
     if (password !== confirmPassword) {
       alert("As senhas não conferem, tente novamente.");
       setPassword("");
@@ -28,6 +32,8 @@ export default function SignUser() {
       .post("http://localhost:4000/users", body)
       .then(() => {
         setLoading(false);
+        alert('Guru cadastrado com sucesso');
+        onClose();
       })
       .catch((error) => {
         if (error.response.status === 409) {
@@ -38,6 +44,19 @@ export default function SignUser() {
         setLoading(false);
       });
   }
+
+  useEffect(resetData,[open]);
+
+  function resetData() {
+    if (!open) {
+      setName('');
+      setEmail('');
+      setPassword('');
+      setCpf('');
+      setPhone("");
+    }
+  }
+  
 
   return (
     <>

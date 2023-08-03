@@ -18,7 +18,7 @@ const Dialog = ({open, onClose, children}: DialogProps) => {
     alignItems: "center",
     justifyContent: "center",
     background: "gray",
-    opacity: "80%"
+    opacity: "96%"
   }}>
     <div style={{
       border: "1px solid #000",

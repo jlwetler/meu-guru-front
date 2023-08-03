@@ -17,7 +17,7 @@ export default function Home() {
           </Button>
           <Button onClick={()=> setOpen(true)}>Cadastrar usuário</Button>
           <Dialog open={open} onClose={()=> setOpen(false)}>
-            <SignUser/>
+            <SignUser open={open} onClose={()=> setOpen(false)}/>
           </Dialog>
       </div>
     </>

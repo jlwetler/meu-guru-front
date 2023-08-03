@@ -10,7 +10,9 @@ import Container from "@/components/Container";
 import Loading from "@/components/Loading";
 
 interface User {
-  map(arg0: (user: User) => import("react").JSX.Element): import("react").ReactNode;
+  map(
+    arg0: (user: User) => import("react").JSX.Element
+  ): import("react").ReactNode;
   id: number;
   name: string;
   email: string;
@@ -21,22 +23,23 @@ interface User {
 }
 
 export default function ListUsers() {
-  const [ users, setUsers ] = useState<User[]>([])
-  const [ page, setPage ] = useState(1);
-  const [ pageSize, setPageSize ] = useState(10);
-  const [ name, setName ] = useState("");
-  const [ email, setEmail ] = useState("");
-  
-  useEffect(getUsers,[])
+  const [users, setUsers] = useState<User[]>([]);
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+
+  useEffect(getUsers, []);
   console.log(users);
   function getUsers() {
-    axios.get(`http://localhost:4000/users?page=${page}&pageSize=${pageSize}`)
-        .then( (response) => {
-            setUsers(response.data);
-        })
-        .catch(error => {
-            console.log(error)
-        })
+    axios
+      .get(`http://localhost:4000/users?page=${page}&pageSize=${pageSize}`)
+      .then((response) => {
+        setUsers(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   }
 
   function deleteItem(id: number) {
@@ -48,11 +51,11 @@ export default function ListUsers() {
   function searchByEmail() {
     console.log(`procura por email`);
   }
-  
+
   return (
-    <div style={{background: '#F8F8F8'}}>
+    <div style={{ background: "#F8F8F8" }}>
       <Header />
- 
+      
       <UserContainer>
         <Description>
           <UserName>Usuário</UserName>
@@ -66,16 +69,14 @@ export default function ListUsers() {
             <UserName>
               <span>
                 <p>{user.name}</p>
-                <p style={{ color: "#961322" }}>
-                  {user.email}
-                </p>
+                <p style={{ color: "#961322" }}>{user.email}</p>
               </span>
             </UserName>
             <Quantity>
-              <p>{user.cpf}</p>      
+              <p>{user.cpf}</p>
             </Quantity>
             <Quantity>
-              <p>{user.phone}</p>      
+              <p>{user.phone}</p>
             </Quantity>
             <Quantity>
               <p>{dayJS(user.createdAt).format("DD/MM/YYYY")}</p>
@@ -86,14 +87,12 @@ export default function ListUsers() {
         ))}
       </UserContainer>
     </div>
-  )
+  );
 }
-
-
 
 const UserContainer = styled.div`
   width: 90vw;
-  margin: 20px auto;
+  margin: 100px auto;
   border-radius: 30px;
   border-box: 1px solid;
 `;
@@ -127,7 +126,7 @@ const SearchIcon = styled(AiOutlineSearch)`
 
 const UserInfo = styled.div`
   background: #fff;
-  display:flex;
+  display: flex;
   align-items: center;
   height: 80px;
   margin: 3vh auto;
@@ -136,7 +135,7 @@ const UserInfo = styled.div`
 `;
 
 const EditButton = styled.div`
-  color: #5F00DB;
+  color: #5f00db;
   display: flex;
   font-weight: bold;
   justify-content: center;
@@ -144,13 +143,13 @@ const EditButton = styled.div`
   width: 160px;
   height: 30px;
   margin: 0 2vw;
-  border: 1px solid #5F00DB; 
+  border: 1px solid #5f00db;
   border-radius: 20px;
   cursor: pointer;
   &:hover {
-    background: #D8BFD8;
+    background: #d8bfd8;
   }
-`
+`;
 
 /*          <SearchBar>
             <input
