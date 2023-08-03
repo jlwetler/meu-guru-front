@@ -4,19 +4,13 @@ import SignUser from "@/components/SignGuru";
 import Link from "next/link";
 import { useState } from "react";
 import styled from "styled-components";
-import Image from "next/image";
+import Header from "@/components/Header";
 
 export default function Home() {
   const [open, setOpen] = useState(false)
   return (
     <>
-      <Top>
-        <Image 
-          src='/images/logo-purple.Jpg' 
-          width={150}
-          height={50}
-          alt='logo'/>
-      </Top> 
+      <Header /> 
       <div style={{marginTop: "100px"}}>
           <Button>
             <Link href='/users'>Visualizar usuários</Link>
@@ -44,16 +38,3 @@ const Button = styled.div`
     text-decoration: none;
   }
 `
-
-const Top = styled.div `
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 50px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 10px;
-    background: #2A004F;
-`;
