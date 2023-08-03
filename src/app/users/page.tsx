@@ -5,6 +5,7 @@ import styled from "styled-components";
 import Header from "@/components/Header";
 import { AiOutlineSearch } from "react-icons/ai";
 import { BiTrash } from "react-icons/bi";
+import { IoIosArrowForward, IoIosArrowBack } from "react-icons/io";
 import dayJS from "dayjs";
 import Container from "@/components/Container";
 import Loading from "@/components/Loading";
@@ -28,19 +29,35 @@ export default function ListUsers() {
   const [pageSize, setPageSize] = useState(10);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [maxPage, setMaxPage] = useState(0);
+  let maxUsers: number;
 
-  useEffect(getUsers, []);
-  console.log(users);
+  useEffect(() => {
+    axios
+      .get(`http://localhost:4000/users`)
+      .then((response) => {
+        maxUsers = response.data.length;
+        setMaxPage(Math.floor(maxUsers / pageSize + 1));
+    })
+  },[])
+
+  useEffect(getUsers, [page, pageSize]);
+
   function getUsers() {
     axios
       .get(`http://localhost:4000/users?page=${page}&pageSize=${pageSize}`)
       .then((response) => {
         setUsers(response.data);
+        setMaxPage(Math.floor(maxUsers / pageSize + 1));
+        console.log(`Página ${page} de ${maxPage}, ${pageSize}`)
+        console.log(response.data.length)
       })
       .catch((error) => {
         console.log(error);
       });
   }
+
+  function backPage() {}
 
   function deleteItem(id: number) {
     console.log(`deletou o id ${id}`);
@@ -55,14 +72,64 @@ export default function ListUsers() {
   return (
     <div style={{ background: "#F8F8F8" }}>
       <Header />
-      
+      <SearchWrapper>
+        <SearchBox>
+          <section>Buscar por nome:</section>
+          <SearchBar>
+            <input
+              type="text"
+              placeholder="Nome"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+            />
+            <SearchIcon size={25} />
+          </SearchBar>
+        </SearchBox>
+        <SearchBox>
+          <section>Buscar por email:</section>
+          <SearchBar>
+            <input
+              type="email"
+              placeholder="E-mail"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+            <SearchIcon size={25} />
+          </SearchBar>
+        </SearchBox>
+        <SearchBox />
+        <SearchBox>
+          <Pagination>
+            Página {page} de {maxPage}
+            <BackwardIcon onClick={() => (page > 1 ? setPage(page - 1) : "")} />
+            <ForwardIcon
+              onClick={() => (page < maxPage ? setPage(page + 1) : "")}
+            />
+          </Pagination>
+          <Pagination>
+            Quantidade por página:
+            <select
+              onChange={(e) => setPageSize(parseInt(e.target.value))}
+              value={pageSize}
+            >
+              <option>5</option>
+              <option>10</option>
+              <option>15</option>
+              <option>20</option>
+              <option>50</option>
+            </select>
+          </Pagination>
+        </SearchBox>
+      </SearchWrapper>
       <UserContainer>
         <Description>
           <UserName>Usuário</UserName>
-          <Quantity>CPF</Quantity>
-          <Quantity>Celular</Quantity>
-          <Quantity>Data de registro</Quantity>
-          <Quantity>Ações</Quantity>
+          <UserData>CPF</UserData>
+          <UserData>Celular</UserData>
+          <UserData>Data de registro</UserData>
+          <UserData>Ações</UserData>
         </Description>
         {users.map((user: User) => (
           <UserInfo key={user.id}>
@@ -72,15 +139,15 @@ export default function ListUsers() {
                 <p style={{ color: "#961322" }}>{user.email}</p>
               </span>
             </UserName>
-            <Quantity>
+            <UserData>
               <p>{user.cpf}</p>
-            </Quantity>
-            <Quantity>
+            </UserData>
+            <UserData>
               <p>{user.phone}</p>
-            </Quantity>
-            <Quantity>
+            </UserData>
+            <UserData>
               <p>{dayJS(user.createdAt).format("DD/MM/YYYY")}</p>
-            </Quantity>
+            </UserData>
             <EditButton>Editar usuário</EditButton>
             <TrashIcon size={25} onClick={() => deleteItem(user.id)} />
           </UserInfo>
@@ -90,9 +157,67 @@ export default function ListUsers() {
   );
 }
 
+const SearchWrapper = styled.div`
+  display: flex;
+  justify-content: space-between;
+  width: 90vw;
+  height: 100px;
+  margin: 70px auto 0 auto;
+`;
+
+const SearchBox = styled.div`
+  padding: 25px;
+  width: 20vw;
+  select {
+    text-align: center;
+    height: 25px;
+    width: 50px;
+    margin-left: 10px;
+    border-radius: 7px;
+    box-shadow: 1px 1px 1px 1px rgba(0, 0, 0, 0.2);
+    border: none;
+  }
+  section {
+    display: flex;
+    align-items: flex-end;
+  }
+`;
+
+const Pagination = styled.div`
+  text-align: right;
+  padding: 5px;
+`;
+
+const SearchBar = styled.div`
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 8px;
+  width: 300px;
+  height: 40px;
+  border-radius: 10px;
+  box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2);
+  input {
+    border-radius: 10px;
+    width: 250px;
+    height: 36px;
+    border: none;
+  }
+  input:focus {
+    outline: none;
+  }
+  div {
+    width: 40px;
+    text-align: center;
+    border-left: 1px solid #000;
+    cursor: pointer;
+  }
+`;
+
 const UserContainer = styled.div`
   width: 90vw;
-  margin: 100px auto;
+  margin: 20px auto;
   border-radius: 30px;
   border-box: 1px solid;
 `;
@@ -109,7 +234,7 @@ const UserName = styled.div`
   width: 20vw;
 `;
 
-const Quantity = styled.div`
+const UserData = styled.div`
   text-align: center;
   width: 10vw;
   margin: 3vw;
@@ -122,6 +247,16 @@ const TrashIcon = styled(BiTrash)`
 
 const SearchIcon = styled(AiOutlineSearch)`
   cursor: pointer;
+`;
+
+const ForwardIcon = styled(IoIosArrowForward)`
+  cursor: pointer;
+  margin: 0 6px;
+`;
+
+const BackwardIcon = styled(IoIosArrowBack)`
+  cursor: pointer;
+  margin: 0 6px;
 `;
 
 const UserInfo = styled.div`
