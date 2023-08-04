@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, ChangeEvent } from "react";
 import axios from "axios";
 import styled from "styled-components";
 import Header from "@/components/Header";
@@ -30,16 +30,18 @@ export default function ListUsers() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [maxPage, setMaxPage] = useState(0);
-  let maxUsers: number;
-
-  useEffect(() => {
+  const [maxUsers, setmaxUsers] = useState(0);
+    
+  function getMaxUsers() {
     axios
       .get(`http://localhost:4000/users`)
       .then((response) => {
-        maxUsers = response.data.length;
+        setmaxUsers(response.data.length)
         setMaxPage(Math.floor(maxUsers / pageSize + 1));
     })
-  },[])
+  }
+  
+  useEffect(getMaxUsers,[maxUsers])
 
   useEffect(getUsers, [page, pageSize]);
 
@@ -49,15 +51,16 @@ export default function ListUsers() {
       .then((response) => {
         setUsers(response.data);
         setMaxPage(Math.floor(maxUsers / pageSize + 1));
-        console.log(`Página ${page} de ${maxPage}, ${pageSize}`)
-        console.log(response.data.length)
       })
       .catch((error) => {
         console.log(error);
       });
   }
 
-  function backPage() {}
+  function handleChange(e: ChangeEvent<HTMLSelectElement>) {
+    setPageSize(parseInt(e.target.value));
+    setPage(1);
+  }
 
   function deleteItem(id: number) {
     console.log(`deletou o id ${id}`);
@@ -70,7 +73,7 @@ export default function ListUsers() {
   }
 
   return (
-    <div style={{ background: "#F8F8F8" }}>
+    <div style={{ background: "#F8F8F8", paddingBottom: "10vh"}}>
       <Header />
       <SearchWrapper>
         <SearchBox>
@@ -111,7 +114,7 @@ export default function ListUsers() {
           <Pagination>
             Quantidade por página:
             <select
-              onChange={(e) => setPageSize(parseInt(e.target.value))}
+              onChange={handleChange}
               value={pageSize}
             >
               <option>5</option>
@@ -285,42 +288,3 @@ const EditButton = styled.div`
     background: #d8bfd8;
   }
 `;
-
-/*          <SearchBar>
-            <input
-              type="text"
-              placeholder="Pesquisar"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              required
-            />
-            <div onClick={searchItem}>
-              <AiOutlineSearch size={30} />
-            </div>
-          </SearchBar>
-const SearchBar = styled.div`
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 450px;
-    height: 40px;
-    border: 2px solid #000;
-    border-radius: 50px;
-    box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.5);
-    input {
-        border-radius: 50px;
-        width: 400px;
-        height: 36px;
-        border: none;
-    }
-    input:focus {
-        outline: none;
-      }
-    div {
-        width: 40px;
-        text-align: center;
-        border-left: 1px solid #000;
-        cursor: pointer;
-    }    
-`;
-*/

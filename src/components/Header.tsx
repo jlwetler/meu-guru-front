@@ -1,15 +1,18 @@
 import { styled } from "styled-components";
 import Image from "next/image";
+import Link from "next/link";
 
 export default function Header() {
 
   return (
       <Top>
+        <Link href='/'>
         <Image 
           src='/images/logo-purple.Jpg' 
           width={150}
           height={50}
           alt='logo'/>
+        </Link>
       </Top> 
   )
 }
