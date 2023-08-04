@@ -36,5 +36,6 @@ const Button = styled.div`
   cursor: pointer;
   a {
     text-decoration: none;
+    color: #000;
   }
 `

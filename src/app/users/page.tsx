@@ -1,16 +1,17 @@
 "use client";
-import { useState, useEffect, useRef, ChangeEvent } from "react";
+import { useState, useEffect, ChangeEvent } from "react";
 import axios from "axios";
 import styled from "styled-components";
 import Header from "@/components/Header";
-import { AiOutlineSearch } from "react-icons/ai";
-import { BiTrash } from "react-icons/bi";
+import { AiOutlineSearch, AiOutlineClear } from "react-icons/ai";
+import { BiTrash, BiHome } from "react-icons/bi";
 import { IoIosArrowForward, IoIosArrowBack } from "react-icons/io";
 import dayJS from "dayjs";
 import Dialog from "@/components/Dialog";
 import EditUser from "@/components/EditGuru";
-import Container from "@/components/DialogContainer";
+import Image from "next/image";
 import Loading from "@/components/Loading";
+import Link from "next/link";
 
 interface User {
   map(
@@ -33,8 +34,8 @@ export default function ListUsers() {
   const [email, setEmail] = useState("");
   const [maxPage, setMaxPage] = useState(0);
   const [totalUsers, setTotalUsers] = useState(0);
-  const [ open, setOpen ] = useState(false);
-  const [ editUserId, setEditUserId ] = useState(0);
+  const [open, setOpen] = useState(false);
+  const [editUserId, setEditUserId] = useState(0);
 
   useEffect(getUsers, [page, pageSize, totalUsers]);
 
@@ -43,10 +44,10 @@ export default function ListUsers() {
       .get(`http://localhost:4000/users?page=${page}&pageSize=${pageSize}`)
       .then((response) => {
         setUsers(response.data.users);
-        setTotalUsers(response.data.totalUsers)
-        totalUsers % pageSize !== 0 ?
-        setMaxPage(Math.floor(totalUsers / pageSize + 1)) :
-        setMaxPage(Math.ceil(totalUsers / pageSize ));
+        setTotalUsers(response.data.totalUsers);
+        totalUsers % pageSize !== 0
+          ? setMaxPage(Math.floor(totalUsers / pageSize + 1))
+          : setMaxPage(Math.ceil(totalUsers / pageSize));
       })
       .catch((error) => {
         console.log(error);
@@ -58,16 +59,21 @@ export default function ListUsers() {
     setPage(1);
   }
 
+  function clearSearch() {
+    setName("");
+    setEmail("");
+  }
+
   function deleteUser(id: number) {
-    if(window.confirm("Tem certeza que deseja deletar o usuário?")) {
+    if (window.confirm("Tem certeza que deseja deletar o usuário?")) {
       axios
-      .delete(`http://localhost:4000/users/${id}`)
-      .then((response) => {
-        getUsers();
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+        .delete(`http://localhost:4000/users/${id}`)
+        .then((response) => {
+          getUsers();
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     }
   }
 
@@ -76,13 +82,13 @@ export default function ListUsers() {
     setOpen(true);
     console.log(editUserId);
   }
-  
+
   function searchByName(name: string) {
     axios
       .get(`http://localhost:4000/users/name/${name}`)
       .then((response) => {
         setUsers(response.data);
-        setTotalUsers(response.data.length)
+        setTotalUsers(response.data.length);
         setMaxPage(Math.floor(totalUsers / pageSize + 1));
         setEmail("");
       })
@@ -90,7 +96,7 @@ export default function ListUsers() {
         console.log(error);
       });
   }
-  
+
   function searchByEmail(email: string) {
     axios
       .get(`http://localhost:4000/users/email/${email}`)
@@ -105,7 +111,7 @@ export default function ListUsers() {
   }
 
   return (
-    <div style={{ background: "#F8F8F8", paddingBottom: "10vh"}}>
+    <div style={{ background: "#F8F8F8", paddingBottom: "10vh" }}>
       <Header />
       <SearchWrapper>
         <SearchBox>
@@ -118,7 +124,7 @@ export default function ListUsers() {
               onChange={(e) => setName(e.target.value)}
               required
             />
-            <SearchIcon size={25} onClick={() => searchByName(name)}/>
+            <SearchIcon size={25} onClick={() => searchByName(name)} />
           </SearchBar>
         </SearchBox>
         <SearchBox>
@@ -131,13 +137,21 @@ export default function ListUsers() {
               onChange={(e) => setEmail(e.target.value)}
               required
             />
-            <SearchIcon size={25} onClick={() => searchByEmail(email)}/>
+            <SearchIcon size={25} onClick={() => searchByEmail(email)} />
           </SearchBar>
         </SearchBox>
         <SearchBox>
-          <nav onClick={()=> getUsers()}>
-            <span>Limpar busca</span>
-          </nav>
+          <NavOptions>
+            <nav onClick={() => clearSearch()}>
+              <span><AiOutlineClear />Limpar busca</span>
+            </nav>
+            <Link href='/'>
+              <nav>
+                <span><BiHome />Voltar para home</span>
+              </nav>
+            </Link>
+
+          </NavOptions>
         </SearchBox>
         <SearchBox>
           <Pagination>
@@ -149,10 +163,7 @@ export default function ListUsers() {
           </Pagination>
           <Pagination>
             Quantidade por página:
-            <select
-              onChange={handleChange}
-              value={pageSize}
-            >
+            <select onChange={handleChange} value={pageSize}>
               <option>5</option>
               <option>10</option>
               <option>15</option>
@@ -170,31 +181,48 @@ export default function ListUsers() {
           <UserData>Data de registro</UserData>
           <UserData>Ações</UserData>
         </Description>
-        {users.length === 0 ?<NotFoundUser key={404}> <p>Nenhum usuário encontrado</p> </NotFoundUser> :
+        {users.length === 0 ? (
+          <NotFoundUser key={404}>
+            <Image
+              src="/images/not-found.Jpg"
+              width={600}
+              height={170}
+              alt="users not found"
+            />
+          </NotFoundUser>
+        ) : (
           users.map((user: User) => (
-          <UserInfo key={user.id}>
-            <UserName>
-              <span>
-                <p>{user.name}</p>
-                <p style={{ color: "#961322" }}>{user.email}</p>
-              </span>
-            </UserName>
-            <UserData>
-              <p>{user.cpf}</p>
-            </UserData>
-            <UserData>
-              <p>{user.phone}</p>
-            </UserData>
-            <UserData>
-              <p>{dayJS(user.createdAt).format("DD/MM/YYYY")}</p>
-            </UserData>
-            <EditButton onClick={() => editUser(user.id)}>Editar usuário</EditButton>
-            <TrashIcon size={25} onClick={() => deleteUser(user.id)} />
-          </UserInfo>
-        ))}
+            <UserInfo key={user.id}>
+              <UserName>
+                <span>
+                  <p>{user.name}</p>
+                  <p style={{ color: "#961322" }}>{user.email}</p>
+                </span>
+              </UserName>
+              <UserData>
+                <p>{user.cpf}</p>
+              </UserData>
+              <UserData>
+                <p>{user.phone}</p>
+              </UserData>
+              <UserData>
+                <p>{dayJS(user.createdAt).format("DD/MM/YYYY")}</p>
+              </UserData>
+              <EditButton onClick={() => editUser(user.id)}>
+                Editar usuário
+              </EditButton>
+              <TrashIcon size={25} onClick={() => deleteUser(user.id)} />
+            </UserInfo>
+          ))
+        )}
       </UserContainer>
-      <Dialog open={open} onClose={()=> setOpen(false)}>
-        <EditUser open={open} onClose={()=> setOpen(false)} id={editUserId} getUsers={getUsers}/>
+      <Dialog open={open} onClose={() => setOpen(false)}>
+        <EditUser
+          open={open}
+          onClose={() => setOpen(false)}
+          id={editUserId}
+          getUsers={getUsers}
+        />
       </Dialog>
     </div>
   );
@@ -224,13 +252,20 @@ const SearchBox = styled.div`
     display: flex;
     align-items: flex-end;
   }
-  nav {
-    display: flex;
-    align-items: center;
-    height: 100px;
-    span {
-      cursor: pointer;
-    }
+`;
+
+const NavOptions = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 100px;
+  width: 20vw;
+  span {
+    cursor: pointer;
+  }
+  a {
+    text-decoration: none;
+    color: #000;
   }
 `;
 
@@ -296,8 +331,8 @@ const NotFoundUser = styled.div`
   align-items: center;
   justify-content: center;
   width: 90vw;
-  height: 30vh;
-`
+  height: 53vh;
+`;
 
 const UserInfo = styled.div`
   background: #fff;
@@ -307,7 +342,6 @@ const UserInfo = styled.div`
   margin: 3vh auto;
   box-shadow: 1px 1px 1px 1px rgba(0, 0, 0, 0.1);
   border-radius: 10px;
-  
 `;
 
 const EditButton = styled.div`
