@@ -7,6 +7,7 @@ import { AiOutlineSearch } from "react-icons/ai";
 import { BiTrash } from "react-icons/bi";
 import { IoIosArrowForward, IoIosArrowBack } from "react-icons/io";
 import dayJS from "dayjs";
+import Dialog from "@/components/Dialog";
 import Container from "@/components/Container";
 import Loading from "@/components/Loading";
 
@@ -31,6 +32,7 @@ export default function ListUsers() {
   const [email, setEmail] = useState("");
   const [maxPage, setMaxPage] = useState(0);
   const [maxUsers, setmaxUsers] = useState(0);
+  const [ open, setOpen ] = useState(false);
     
   function getMaxUsers() {
     axios
@@ -62,9 +64,19 @@ export default function ListUsers() {
     setPage(1);
   }
 
-  function deleteItem(id: number) {
-    console.log(`deletou o id ${id}`);
+  function deleteUser(id: number) {
+    if(window.confirm("Tem certeza que deseja deletar o usuário?")) {
+      axios
+      .delete(`http://localhost:4000/users/${id}`)
+      .then((response) => {
+        getUsers();
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    }
   }
+
   
   function searchByName(name: string) {
     axios
@@ -178,10 +190,11 @@ export default function ListUsers() {
               <p>{dayJS(user.createdAt).format("DD/MM/YYYY")}</p>
             </UserData>
             <EditButton>Editar usuário</EditButton>
-            <TrashIcon size={25} onClick={() => deleteItem(user.id)} />
+            <TrashIcon size={25} onClick={() => deleteUser(user.id)} />
           </UserInfo>
         ))}
       </UserContainer>
+
     </div>
   );
 }
