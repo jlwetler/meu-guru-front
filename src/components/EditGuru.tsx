@@ -6,17 +6,20 @@ import Loading from "@/components/Loading";
 
 interface Props {
   open: boolean;
-  onClose: () => void 
+  id: number;
+  onClose: () => void;
+  getUsers: () => void; 
 }
 
-export default function SignUser({open, onClose}: Props) {
+export default function EditUser({open, id, onClose, getUsers}: Props) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [cpf, setCpf] = useState("");
   const [phone, setPhone] = useState("");
   const [loading, setLoading] = useState(false);
+
+  console.log(id);
 
   function sendData() {
     if (password !== confirmPassword) {
@@ -26,13 +29,17 @@ export default function SignUser({open, onClose}: Props) {
       return;
     }
     setLoading(false);
-    const body = { name, email, password, cpf, phone };
-
+    let body = {  };
+    if (email !== "") body = {...body, email};
+    if (password !== "") body = {...body, password};
+    if (phone !== "") body = {...body, phone};
+    
     axios
-      .post("http://localhost:4000/users", body)
+      .put(`http://localhost:4000/users/${id}`, body)
       .then(() => {
         setLoading(false);
-        alert('Guru cadastrado com sucesso');
+        alert('Guru editado com sucesso');
+        getUsers();
         onClose();
       })
       .catch((error) => {
@@ -52,12 +59,10 @@ export default function SignUser({open, onClose}: Props) {
       setName('');
       setEmail('');
       setPassword('');
-      setCpf('');
       setPhone("");
     }
   }
   
-
   return (
     <>
       <Container>
@@ -66,49 +71,35 @@ export default function SignUser({open, onClose}: Props) {
           alt="logo"
         />
         <input
-          type="text"
-          placeholder="Nome"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          required
-        />
-        <input
           type="email"
-          placeholder="Email"
+          placeholder="Novo e-mail"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
         />
         <input
           type="password"
-          placeholder="Senha"
+          placeholder="Nova senha"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
         />
         <input
           type="password"
-          placeholder="Confirme a senha"
+          placeholder="Confirme a nova senha"
           value={confirmPassword}
           onChange={(e) => setConfirmPassword(e.target.value)}
           required
         />
         <input
           type="text"
-          placeholder="CPF"
-          value={cpf}
-          onChange={(e) => setCpf(e.target.value)}
-          required
-        />
-        <input
-          type="text"
-          placeholder="Telefone"
+          placeholder="Novo telefone"
           value={phone}
           onChange={(e) => setPhone(e.target.value)}
           required
         />
         <button onClick={sendData}>
-          {!loading ? "Cadastrar" : <Loading />}
+          {!loading ? "Editar informações" : <Loading />}
         </button>
       </Container>
     </>

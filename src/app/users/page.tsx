@@ -8,7 +8,8 @@ import { BiTrash } from "react-icons/bi";
 import { IoIosArrowForward, IoIosArrowBack } from "react-icons/io";
 import dayJS from "dayjs";
 import Dialog from "@/components/Dialog";
-import Container from "@/components/Container";
+import EditUser from "@/components/EditGuru";
+import Container from "@/components/DialogContainer";
 import Loading from "@/components/Loading";
 
 interface User {
@@ -31,28 +32,21 @@ export default function ListUsers() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [maxPage, setMaxPage] = useState(0);
-  const [maxUsers, setmaxUsers] = useState(0);
+  const [totalUsers, setTotalUsers] = useState(0);
   const [ open, setOpen ] = useState(false);
-    
-  function getMaxUsers() {
-    axios
-      .get(`http://localhost:4000/users`)
-      .then((response) => {
-        setmaxUsers(response.data.length)
-        setMaxPage(Math.floor(maxUsers / pageSize + 1));
-    })
-  }
-  
-  useEffect(getMaxUsers,[maxUsers])
+  const [ editUserId, setEditUserId ] = useState(0);
 
-  useEffect(getUsers, [page, pageSize]);
+  useEffect(getUsers, [page, pageSize, totalUsers]);
 
   function getUsers() {
     axios
       .get(`http://localhost:4000/users?page=${page}&pageSize=${pageSize}`)
       .then((response) => {
-        setUsers(response.data);
-        setMaxPage(Math.floor(maxUsers / pageSize + 1));
+        setUsers(response.data.users);
+        setTotalUsers(response.data.totalUsers)
+        totalUsers % pageSize !== 0 ?
+        setMaxPage(Math.floor(totalUsers / pageSize + 1)) :
+        setMaxPage(Math.ceil(totalUsers / pageSize ));
       })
       .catch((error) => {
         console.log(error);
@@ -77,14 +71,19 @@ export default function ListUsers() {
     }
   }
 
+  function editUser(id: number) {
+    setEditUserId(id);
+    setOpen(true);
+    console.log(editUserId);
+  }
   
   function searchByName(name: string) {
     axios
       .get(`http://localhost:4000/users/name/${name}`)
       .then((response) => {
         setUsers(response.data);
-        setmaxUsers(response.data.length)
-        setMaxPage(Math.floor(maxUsers / pageSize + 1));
+        setTotalUsers(response.data.length)
+        setMaxPage(Math.floor(totalUsers / pageSize + 1));
         setEmail("");
       })
       .catch((error) => {
@@ -97,7 +96,7 @@ export default function ListUsers() {
       .get(`http://localhost:4000/users/email/${email}`)
       .then((response) => {
         setUsers(response.data);
-        setMaxPage(Math.floor(maxUsers / pageSize + 1));
+        setMaxPage(Math.floor(totalUsers / pageSize + 1));
         setName("");
       })
       .catch((error) => {
@@ -189,12 +188,14 @@ export default function ListUsers() {
             <UserData>
               <p>{dayJS(user.createdAt).format("DD/MM/YYYY")}</p>
             </UserData>
-            <EditButton>Editar usuário</EditButton>
+            <EditButton onClick={() => editUser(user.id)}>Editar usuário</EditButton>
             <TrashIcon size={25} onClick={() => deleteUser(user.id)} />
           </UserInfo>
         ))}
       </UserContainer>
-
+      <Dialog open={open} onClose={()=> setOpen(false)}>
+        <EditUser open={open} onClose={()=> setOpen(false)} id={editUserId} getUsers={getUsers}/>
+      </Dialog>
     </div>
   );
 }
