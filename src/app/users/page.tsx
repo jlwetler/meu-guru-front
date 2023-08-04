@@ -65,11 +65,32 @@ export default function ListUsers() {
   function deleteItem(id: number) {
     console.log(`deletou o id ${id}`);
   }
-  function searchByName() {
-    console.log(`procura por nome`);
+  
+  function searchByName(name: string) {
+    axios
+      .get(`http://localhost:4000/users/name/${name}`)
+      .then((response) => {
+        setUsers(response.data);
+        setmaxUsers(response.data.length)
+        setMaxPage(Math.floor(maxUsers / pageSize + 1));
+        setEmail("");
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   }
-  function searchByEmail() {
-    console.log(`procura por email`);
+  
+  function searchByEmail(email: string) {
+    axios
+      .get(`http://localhost:4000/users/email/${email}`)
+      .then((response) => {
+        setUsers(response.data);
+        setMaxPage(Math.floor(maxUsers / pageSize + 1));
+        setName("");
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   }
 
   return (
@@ -86,7 +107,7 @@ export default function ListUsers() {
               onChange={(e) => setName(e.target.value)}
               required
             />
-            <SearchIcon size={25} />
+            <SearchIcon size={25} onClick={() => searchByName(name)}/>
           </SearchBar>
         </SearchBox>
         <SearchBox>
@@ -99,10 +120,14 @@ export default function ListUsers() {
               onChange={(e) => setEmail(e.target.value)}
               required
             />
-            <SearchIcon size={25} />
+            <SearchIcon size={25} onClick={() => searchByEmail(email)}/>
           </SearchBar>
         </SearchBox>
-        <SearchBox />
+        <SearchBox>
+          <nav onClick={()=> getUsers()}>
+            <span>Limpar busca</span>
+          </nav>
+        </SearchBox>
         <SearchBox>
           <Pagination>
             Página {page} de {maxPage}
@@ -134,7 +159,8 @@ export default function ListUsers() {
           <UserData>Data de registro</UserData>
           <UserData>Ações</UserData>
         </Description>
-        {users.map((user: User) => (
+        {users.length === 0 ?<NotFoundUser key={404}> <p>Nenhum usuário encontrado</p> </NotFoundUser> :
+          users.map((user: User) => (
           <UserInfo key={user.id}>
             <UserName>
               <span>
@@ -169,8 +195,8 @@ const SearchWrapper = styled.div`
 `;
 
 const SearchBox = styled.div`
-  padding: 25px;
-  width: 20vw;
+  padding: 22px;
+  width: 18vw;
   select {
     text-align: center;
     height: 25px;
@@ -183,6 +209,14 @@ const SearchBox = styled.div`
   section {
     display: flex;
     align-items: flex-end;
+  }
+  nav {
+    display: flex;
+    align-items: center;
+    height: 100px;
+    span {
+      cursor: pointer;
+    }
   }
 `;
 
@@ -197,13 +231,13 @@ const SearchBar = styled.div`
   align-items: center;
   justify-content: center;
   margin-top: 8px;
-  width: 300px;
+  width: 20vw;
   height: 40px;
   border-radius: 10px;
   box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2);
   input {
     border-radius: 10px;
-    width: 250px;
+    width: 17vw;
     height: 36px;
     border: none;
   }
@@ -243,24 +277,13 @@ const UserData = styled.div`
   margin: 3vw;
 `;
 
-const TrashIcon = styled(BiTrash)`
-  cursor: pointer;
-  margin-left: 15px;
-`;
-
-const SearchIcon = styled(AiOutlineSearch)`
-  cursor: pointer;
-`;
-
-const ForwardIcon = styled(IoIosArrowForward)`
-  cursor: pointer;
-  margin: 0 6px;
-`;
-
-const BackwardIcon = styled(IoIosArrowBack)`
-  cursor: pointer;
-  margin: 0 6px;
-`;
+const NotFoundUser = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 90vw;
+  height: 30vh;
+`
 
 const UserInfo = styled.div`
   background: #fff;
@@ -270,6 +293,7 @@ const UserInfo = styled.div`
   margin: 3vh auto;
   box-shadow: 1px 1px 1px 1px rgba(0, 0, 0, 0.1);
   border-radius: 10px;
+  
 `;
 
 const EditButton = styled.div`
@@ -287,4 +311,23 @@ const EditButton = styled.div`
   &:hover {
     background: #d8bfd8;
   }
+`;
+
+const TrashIcon = styled(BiTrash)`
+  cursor: pointer;
+  margin-left: 15px;
+`;
+
+const SearchIcon = styled(AiOutlineSearch)`
+  cursor: pointer;
+`;
+
+const ForwardIcon = styled(IoIosArrowForward)`
+  cursor: pointer;
+  margin: 0 6px;
+`;
+
+const BackwardIcon = styled(IoIosArrowBack)`
+  cursor: pointer;
+  margin: 0 6px;
 `;
