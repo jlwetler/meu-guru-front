@@ -37,5 +37,12 @@ const Button = styled.div`
   a {
     text-decoration: none;
     color: #000;
+    &:hover {
+      color: #fff;
+    }
+  }  
+  &:hover {
+    background: purple;
+    color: #fff;
   }
 `

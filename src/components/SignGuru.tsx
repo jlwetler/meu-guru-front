@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import Container from "@/components/DialogContainer";
 import Loading from "@/components/Loading";
+import Image from "next/image";
 
 interface Props {
   open: boolean;
@@ -57,13 +58,14 @@ export default function SignUser({open, onClose}: Props) {
     }
   }
   
-
   return (
     <>
       <Container>
-        <img
-          src="https://meuguru.net/_next/static/media/logo.3a6dee38.svg"
-          alt="logo"
+        <Image 
+          src='/images/logo-white.Jpg' 
+          width={250}
+          height={80}
+          alt='logo'
         />
         <input
           type="text"
