@@ -7,22 +7,29 @@ import styled from "styled-components";
 import Header from "@/components/Header";
 
 export default function Home() {
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(false);
   return (
     <>
-      <Header /> 
-      <div style={{marginTop: "100px"}}>
-          <Button>
-            <Link href='/users'>Visualizar usuários</Link>
-          </Button>
-          <Button onClick={()=> setOpen(true)}>Cadastrar usuário</Button>
-          <Dialog open={open} onClose={()=> setOpen(false)}>
-            <SignUser open={open} onClose={()=> setOpen(false)}/>
-          </Dialog>
-      </div>
+      <Header />
+      <Options>
+        <Link href="/users">
+          <Button>Visualizar usuários</Button>
+        </Link>
+        <Button onClick={() => setOpen(true)}>Cadastrar usuário</Button>
+        <Dialog open={open} onClose={() => setOpen(false)}>
+          <SignUser open={open} onClose={() => setOpen(false)} />
+        </Dialog>
+      </Options>
     </>
-  )
+  );
 }
+
+const Options = styled.div`
+  margin-top: 100px;
+  a {
+    text-decoration: none;
+  }
+`;
 
 const Button = styled.div`
   display: flex;
@@ -30,19 +37,13 @@ const Button = styled.div`
   align-items: center;
   width: 200px;
   height: 40px;
-  border: 1px solid #000; 
+  border: 1px solid #000;
   border-radius: 20px;
   margin: 20px auto;
   cursor: pointer;
-  a {
-    text-decoration: none;
-    color: #000;
-    &:hover {
-      color: #fff;
-    }
-  }  
+  color: #000;
   &:hover {
-    background: purple;
+    background: #2a004f;
     color: #fff;
   }
-`
+`;

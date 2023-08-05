@@ -87,11 +87,11 @@ export default function SearchOptions({ setUsers, page, setPage, maxPage, pageSi
         <SearchBox>
           <NavOptions>
             <nav onClick={() => clearSearch()}>
-              <span><AiOutlineClear />Limpar busca</span>
+            <AiOutlineClear /><span>Limpar busca</span>
             </nav>
             <Link href='/'>
               <nav>
-                <span><BiHome />Voltar para home</span>
+              <BiHome /><span>Voltar para home</span>
               </nav>
             </Link>
 
@@ -143,6 +143,8 @@ const SearchBox = styled.div`
   section {
     display: flex;
     align-items: flex-end;
+    color: #5f00db;
+    font-weight: bold;
   }
 `;
 
@@ -151,9 +153,10 @@ const NavOptions = styled.div`
   align-items: center;
   justify-content: space-between;
   height: 100px;
-  width: 20vw;
+  width: 21vw;
   span {
     cursor: pointer;
+    margin: 0 4px;
   }
   a {
     text-decoration: none;

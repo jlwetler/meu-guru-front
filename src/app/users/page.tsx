@@ -91,7 +91,7 @@ export default function ListUsers() {
               <UserName>
                 <span>
                   <p>{user.name}</p>
-                  <p style={{ color: "#961322" }}>{user.email}</p>
+                  <p style={{ color: "#5f00db",  fontWeight: "bold"}}>{user.email}</p>
                 </span>
               </UserName>
               <UserData>

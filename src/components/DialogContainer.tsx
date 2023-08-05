@@ -31,10 +31,10 @@ export default styled.div `
             display: flex;
             justify-content: center;
             align-items: center;
-            background: #A328D6;
+            background: #2a004f;
             border-radius: 20px;
             color: #ffffff;
-            width: 303px;
+            width: 320px;
             height: 45px;
             margin-bottom: 15px;
             border: none;
