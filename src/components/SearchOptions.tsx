@@ -3,15 +3,12 @@ import { ChangeEvent, Dispatch, SetStateAction, useEffect, useState } from "reac
 import { AiOutlineClear, AiOutlineSearch } from 'react-icons/ai';
 import { BiHome } from 'react-icons/bi';
 import { IoIosArrowBack, IoIosArrowForward } from 'react-icons/io';
+import User from "@/interfaces/UserInterface";
+import axios from 'axios';
 import styled from 'styled-components';
 
 interface SearchProps {
-  name: string;
-  setName: Dispatch<SetStateAction<string>>;
-  searchByName(name: string): void;
-  email: string;
-  setEmail: Dispatch<SetStateAction<string>>;
-  searchByEmail(email: string): void;
+  setUsers: Dispatch<SetStateAction<User[]>>;
   page: number;
   setPage: Dispatch<SetStateAction<number>>;
   maxPage: number;
@@ -20,7 +17,33 @@ interface SearchProps {
   getUsers: () => void;
 }
 
-export default function SearchOptions({ name, setName, searchByName, email, setEmail, searchByEmail, page, setPage, maxPage, pageSize, setPageSize, getUsers } : SearchProps) {
+export default function SearchOptions({ setUsers, page, setPage, maxPage, pageSize, setPageSize, getUsers } : SearchProps) {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+
+  function searchByName(name: string) {
+    axios
+      .get(`http://localhost:4000/users/name/${name}`)
+      .then((response) => {
+        setUsers(response.data);
+        setEmail("");
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
+
+  function searchByEmail(email: string) {
+    axios
+      .get(`http://localhost:4000/users/email/${email}`)
+      .then((response) => {
+        setUsers(response.data);
+        setName("");
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
 
   function clearSearch() {
     setName("");

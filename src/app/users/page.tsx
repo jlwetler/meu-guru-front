@@ -8,27 +8,13 @@ import dayJS from "dayjs";
 import Dialog from "@/components/Dialog";
 import EditUser from "@/components/EditGuru";
 import Image from "next/image";
+import User from "@/interfaces/UserInterface";
 import SearchOptions from "@/components/SearchOptions";
-
-interface User {
-  map(
-    arg0: (user: User) => import("react").JSX.Element
-  ): import("react").ReactNode;
-  id: number;
-  name: string;
-  email: string;
-  password: string;
-  cpf: string;
-  phone: string;
-  createdAt: Date;
-}
 
 export default function ListUsers() {
   const [users, setUsers] = useState<User[]>([]);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
   const [maxPage, setMaxPage] = useState(0);
   const [totalUsers, setTotalUsers] = useState(0);
   const [open, setOpen] = useState(false);
@@ -70,40 +56,11 @@ export default function ListUsers() {
     console.log(editUserId);
   }
 
-  function searchByName(name: string) {
-    axios
-      .get(`http://localhost:4000/users/name/${name}`)
-      .then((response) => {
-        setUsers(response.data);
-        setEmail("");
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }
-
-  function searchByEmail(email: string) {
-    axios
-      .get(`http://localhost:4000/users/email/${email}`)
-      .then((response) => {
-        setUsers(response.data);
-        setName("");
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }
-
   return (
     <div style={{ background: "#F8F8F8", paddingBottom: "10vh" }}>
       <Header />
       <SearchOptions 
-      name= {name}
-      setName= {setName}
-      searchByName={searchByName}
-      email={email}
-      setEmail={setEmail}
-      searchByEmail={searchByEmail}
+      setUsers={setUsers}
       page={page}
       setPage={setPage}
       maxPage={maxPage}
