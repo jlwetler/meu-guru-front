@@ -25,6 +25,9 @@ export default function SignUser({open, onClose}: Props) {
       setPassword("");
       setConfirmPassword("");
       return;
+    } else if (name.length < 3) {
+      alert("O nome deve conter no mínimo três caracteres.");
+      return;
     }
     setLoading(false);
     const body = { name, email, password, cpf, phone };
@@ -37,11 +40,12 @@ export default function SignUser({open, onClose}: Props) {
         onClose();
       })
       .catch((error) => {
-        if (error.response.status === 409) {
-          alert("Email já cadastrado, insira um e-mail diferente");
-        } else {
-          alert("Erro no cadastro, tente novamente");
-        }
+        const { message } = error.response.data;
+        if (message === "email already in use") alert("Email já cadastrado, insira um e-mail diferente");
+        if (message === "password is not strong enough") alert("A senha deve conter, no mínimo, 8 letras, uma letra maiúscula, um número e um símbolo");
+        if (message === "cpf must be a cpf") alert("CPF inválido");
+        if (message === "phone must be a phone number") alert("Número de celular inválido inválido");
+        
         setLoading(false);
       });
   }
